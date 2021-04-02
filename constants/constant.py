@@ -1,0 +1,1 @@
+BLANK_ERROR_MSG = 'This field cannot be blank'
