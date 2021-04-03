@@ -6,7 +6,7 @@ from settings import app_instance
 from settings import db
 from flask_restful import Api
 
-from views.endpoints import CreateContact
+from views.endpoints import CreateContact, UpdateContacts
 from views.endpoints import DeleteContact
 from views.endpoints import  ListAllContacts
 
@@ -19,6 +19,7 @@ api=Api(app_instance)
 api.add_resource(CreateContact,'/create/contact')
 api.add_resource(DeleteContact,'/delete/contact')
 api.add_resource(ListAllContacts,'/list/all/contacts')
+api.add_resource(UpdateContacts,'/update/contact')
 
 if __name__ == '__main__':
     app_instance.run()

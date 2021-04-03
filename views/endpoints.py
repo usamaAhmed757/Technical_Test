@@ -21,7 +21,7 @@ class CreateContact(Resource):
                         required=True,
                         help=BLANK_ERROR_MSG)
     parser.add_argument('phone_number',
-                        type=int,
+                        type=str,
                         required=True,
                         help=BLANK_ERROR_MSG)
     parser.add_argument('email_id',
@@ -107,3 +107,59 @@ class ListAllContacts(Resource):
             return dict(all_contacts=contact_list,all_emails=emails_list)
         except Exception as error:
             return dict(message=str(error), success=False), 400
+class UpdateContacts(Resource):
+    parser = reqparse.RequestParser(bundle_errors=True)
+    parser.add_argument('new_user_name',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    parser.add_argument('new_first_name',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    parser.add_argument('new_last_name',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    parser.add_argument('new_phone_number',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    parser.add_argument('new_email_id',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    parser.add_argument('contact_id',
+                        type=int,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    def put(self):
+        data = UpdateContacts.parser.parse_args()
+
+        new_user_name = data.get('new_user_name')
+        new_first_name = data.get('new_first_name')
+        new_last_name = data.get('new_last_name')
+        new_phone_number = data.get("new_phone_number")
+        new_email_id = data.get("new_email_id")
+        contact_id = data.get("contact_id")
+        try:
+            db.session.query(Contact).filter(Contact.id==contact_id).update({Contact.user_name:new_user_name,Contact.first_name:new_first_name,Contact.last_name:new_last_name,Contact.phone_number:new_phone_number },synchronize_session=False)
+
+
+
+
+            db.session.commit()
+
+            db.session.query(Emails).filter(Emails.contact_id==contact_id).update({Emails.email_id:new_email_id},synchronize_session=False)
+            db.session.commit()
+            return dict(user_name=new_user_name,first_name=new_first_name,last_name=new_last_name,phone_number=new_phone_number,email_id=new_email_id)
+        except Exception as error:
+            return dict(message=str(error), success=False), 400
+
+
+
+
+
+
+
+
