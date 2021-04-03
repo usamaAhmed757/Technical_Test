@@ -20,20 +20,27 @@ class CreateContact(Resource):
                         type=str,
                         required=True,
                         help=BLANK_ERROR_MSG)
+    parser.add_argument('phone_number',
+                        type=int,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+
 
     def post(self):
         data = CreateContact.parser.parse_args()
         user_name = data.get('user_name')
         first_name=data.get('first_name')
         last_name=data.get('last_name')
+        phone_number= data.get("phone_number")
         try:
             contact=db.session.query(Contact).filter(Contact.user_name==user_name).first()
             if contact:
                 return dict(message="Contact with the user_name already exist")
-            new_contact=Contact(user_name=user_name,first_name=first_name,last_name=last_name)
+            new_contact=Contact(user_name=user_name,first_name=first_name,last_name=last_name,phone_number=phone_number)
             db.session.add(new_contact)
             db.session.commit()
-            return dict(message="Contact has been Created Successfully",user_name=user_name,first_name=first_name,last_name=last_name),201
+            return dict(message="Contact has been Created Successfully",user_name=user_name,first_name=first_name,last_name=last_name,
+                        phone_number=phone_number ),201
         except Exception as error:
             return dict(message=str(error), success=False), 400
 class DeleteContact(Resource):
@@ -53,6 +60,21 @@ class DeleteContact(Resource):
             return dict(message="The contact is deleted successfully"),201
         except Exception as error:
             return dict(message=str(error), success=False), 400
+class ListAllContacts(Resource):
+    def get(self):
+        try:
+            contacts=Contact.query.all()
+            contact_list=[]
+            for contact in contacts:
+                contact_list.append({"user_name":contact.user_name,"first_name":contact.first_name,"last_name":contact.last_name,
+                                    "phone_number":contact.phone_number})
+            return dict(all_contacts=contact_list)
+        except Exception as error:
+            return dict(message=str(error), success=False), 400
+
+
+
+
 
 
 

@@ -13,11 +13,13 @@ class Contact(db.Model):
     user_name= db.Column(db.String(50),unique=True)
     first_name=db.Column(db.String(50))
     last_name=db.Column(db.String(50))
+    phone_number=db.Column(db.String(50))
 
-    def __init__(self,user_name,first_name,last_name):
+    def __init__(self,user_name,first_name,last_name,phone_number):
         self.user_name=user_name
         self.first_name=first_name
         self.last_name=last_name
+        self.phone_number=phone_number
 
 
     @classmethod
