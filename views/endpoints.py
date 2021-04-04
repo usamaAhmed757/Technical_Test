@@ -63,7 +63,7 @@ class CreateContact(Resource):
 
             return dict(message="Contact has been Created Successfully", user_name=user_name, first_name=first_name,
                         last_name=last_name,
-                        phone_number=phone_number, email_id=email_id), 201
+                        phone_number=phone_number, email_id=email_id), 200
 
 
 
@@ -104,7 +104,7 @@ class ListAllContacts(Resource):
                     {"user_name": contact.user_name, "first_name": contact.first_name, "last_name": contact.last_name,
                      "phone_number": contact.phone_number})
                 emails_list.append({"emaild_id":email.email_id,"contact_id":email.contact_id})
-            return dict(all_contacts=contact_list,all_emails=emails_list)
+            return dict(all_contacts=contact_list,all_emails=emails_list),200
         except Exception as error:
             return dict(message=str(error), success=False), 400
 class UpdateContacts(Resource):
@@ -129,6 +129,10 @@ class UpdateContacts(Resource):
                         type=str,
                         required=True,
                         help=BLANK_ERROR_MSG)
+    parser.add_argument('old_email_id',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
     parser.add_argument('contact_id',
                         type=int,
                         required=True,
@@ -141,6 +145,7 @@ class UpdateContacts(Resource):
         new_last_name = data.get('new_last_name')
         new_phone_number = data.get("new_phone_number")
         new_email_id = data.get("new_email_id")
+        old_email_id=data.get("old_email_id")
         contact_id = data.get("contact_id")
         try:
             db.session.query(Contact).filter(Contact.id==contact_id).update({Contact.user_name:new_user_name,Contact.first_name:new_first_name,Contact.last_name:new_last_name,Contact.phone_number:new_phone_number },synchronize_session=False)
@@ -150,7 +155,7 @@ class UpdateContacts(Resource):
 
             db.session.commit()
 
-            db.session.query(Emails).filter(Emails.contact_id==contact_id).update({Emails.email_id:new_email_id},synchronize_session=False)
+            db.session.query(Emails).filter(Emails.contact_id==contact_id).filter(Emails.email_id==old_email_id).update({Emails.email_id:new_email_id},synchronize_session=False)
             db.session.commit()
             return dict(user_name=new_user_name,first_name=new_first_name,last_name=new_last_name,phone_number=new_phone_number,email_id=new_email_id)
         except Exception as error:
