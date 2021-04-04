@@ -171,7 +171,7 @@ class FindByUserName(Resource):
         user_name=data.get("user_name")
         try:
             contact=Contact.find_by_user_name(user_name=user_name)
-            return dict(user_name=contact.user_name,first_name=contact.first_name,last_name=contact.last_name)
+            return dict(user_name=contact.user_name,first_name=contact.first_name,last_name=contact.last_name,phone_number=contact.phone_number)
         except Exception as error:
             return dict(message=str(error), success=False), 400
 
