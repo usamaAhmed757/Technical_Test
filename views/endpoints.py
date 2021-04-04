@@ -160,6 +160,25 @@ class UpdateContacts(Resource):
             return dict(user_name=new_user_name,first_name=new_first_name,last_name=new_last_name,phone_number=new_phone_number,email_id=new_email_id)
         except Exception as error:
             return dict(message=str(error), success=False), 400
+class FindByUserName(Resource):
+    parser = reqparse.RequestParser(bundle_errors=True)
+    parser.add_argument('user_name',
+                        type=str,
+                        required=True,
+                        help=BLANK_ERROR_MSG)
+    def get(self):
+        data=FindByUserName.parser.parse_args()
+        user_name=data.get("user_name")
+        try:
+            contact=Contact.find_by_user_name(user_name=user_name)
+            return dict(user_name=contact.user_name,first_name=contact.first_name,last_name=contact.last_name)
+        except Exception as error:
+            return dict(message=str(error), success=False), 400
+
+
+
+
+
 
 
 
